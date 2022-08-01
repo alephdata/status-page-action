@@ -1,0 +1,20 @@
+{
+  "name": "status",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "build": "node --experimental-fetch src/build.mjs",
+    "test": "node --test src"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "^2.7.1"
+  },
+  "dependencies": {
+    "sanitize-html": "^2.7.1"
+  }
+}

@@ -1,0 +1,37 @@
+name: Issues updated
+
+on:
+  push:
+    branches:
+      - main
+  issues:
+    types:
+      - opened
+      - edited
+      - deleted
+      - closed
+      - reopened
+      - labeled
+      - unlabeled
+  issue_comment:
+    types:
+      - created
+      - edited
+      - deleted
+
+permissions:
+  contents: write
+  issues: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build status page
+        uses: alephdata/status-page-action@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # Title of the status page
+          title: My Status Page
+          # Link to your app, rendered in the header of the status page
+          app-url: https://example.org/custom

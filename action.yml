@@ -1,0 +1,77 @@
+name: "Status Page"
+description: "Build a static status page using GitHub Issues to manage incidents."
+
+inputs:
+  token:
+    description: "GitHub access token"
+    required: true
+  title:
+    description: "Status page title"
+  app-url:
+    description: "Link to your app, displayed in the header"
+
+runs:
+  using: "composite"
+
+  steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: Set up git
+      shell: bash
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git remote set-url origin https://${{ github.repository_owner }}:${{ inputs.token }}@github.com/${{ github.repository }}
+
+    - name: Create gh-pages branch if necessary
+      shell: bash
+      run: |
+        if git ls-remote --exit-code --heads origin gh-pages; then
+          # If origin/gh-pages exists, create a local copy
+          git fetch origin
+          git checkout -b gh-pages origin/gh-pages
+        else
+          # Create gh-pages if it does not exists
+          git checkout --orphan gh-pages
+          git reset --hard
+          git commit --allow-empty -m "Initial commit"
+        fi
+        git checkout main
+
+    - name: Set up git worktree
+      shell: bash
+      run: git worktree add build gh-pages
+
+    - name: Install dependencies
+      shell: bash
+      run: cd ${{ github.action_path }} && npm ci
+
+    - name: Build static status page
+      shell: bash
+      run: cd ${{ github.action_path }} && npm run build
+      env:
+        BUILD_DIR: ${{ github.workspace }}/build
+        GITHUB_TOKEN: ${{ inputs.token }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
+        STATUS_PAGE_TITLE: ${{ inputs.title }}
+        STATUS_PAGE_APP_URL: ${{ inputs.app-url }}
+
+    - name: Ensure .nojekyll exists to bypass Jekyll builds on GitHub Pages
+      shell: bash
+      run: touch cd ${{ github.workspace }}/build/.nojekyll
+
+    - name: Commit and push to gh-pages
+      shell: bash
+      run: |
+        cd ${{ github.workspace }}/build
+        git add --all
+        if git diff --cached --exit-code; then
+          echo "Nothing to commit"
+        else
+          git commit -m "Build static status page"
+          git push origin gh-pages
+        fi
