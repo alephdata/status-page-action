@@ -73,16 +73,11 @@ body {
   width: 100%;
   justify-content: space-between;
   align-items: center;
-  text-align: center;
   column-gap: var(--spacing-unit);
 }
 
 .header__title {
-  text-transform: uppercase;
-  font-size: 0.9em;
-  letter-spacing: 0.1em;
   font-weight: bold;
-  text-align: center;
 }
 
 .header__app-link {
