@@ -1,6 +1,13 @@
 import Update from './update.mjs';
 import { sanitizeHtml } from '../helpers.mjs';
 
+const TYPE_LABEL_MAPPING = {
+  minor: 'warning',
+  major: 'error',
+  announcement: 'info',
+  'scheduled-maintenance': 'info',
+};
+
 export default class Message {
   constructor(issue = {}) {
     this.issue = issue;
@@ -30,20 +37,22 @@ export default class Message {
     return new Date(this.closedAt.getTime() + 24 * 60 * 60 * 1000);
   }
 
+  get type() {
+    const label = this.issue.labels?.find((label) => label.startsWith('type:'));
+
+    if (!label) {
+      return 'announcement';
+    }
+
+    return label.replace(/^type:/, '');
+  }
+
   get level() {
-    if (this.closedAt) {
+    if (['minor', 'major'].includes(this.type) && this.closedAt) {
       return 'success';
     }
 
-    const label = this.issue.labels?.find((label) =>
-      label.startsWith('level:')
-    );
-
-    if (!label) {
-      return 'warning';
-    }
-
-    return label.replace(/^level:/, '');
+    return TYPE_LABEL_MAPPING[this.type] || 'info';
   }
 
   get title() {
@@ -68,6 +77,7 @@ export default class Message {
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       displayUntil: this.displayUntil,
+      type: this.type,
       level: this.level,
       title: this.title,
       safeHtmlBody: this.safeHtmlBody,

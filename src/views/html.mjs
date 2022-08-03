@@ -41,15 +41,15 @@ const Message = (message) => {
 };
 
 const Status = (messages) => {
-  const hasIssues = messages.some(({ level }) => {
-    return level !== 'success' && level !== 'info';
+  const hasIncidents = messages.some(({ type }) => {
+    return type === 'minor' || type === 'major';
   });
 
-  const icon = hasIssues
+  const icon = hasIncidents
     ? '<svg width="24px" height="24px" viewBox="0 0 24 24"><path d="M12,0A12,12,0,1,0,24,12,12.035,12.035,0,0,0,12,0Zm4.95,15.536L15.536,16.95,12,13.414,8.464,16.95,7.05,15.536,10.586,12,7.05,8.464,8.464,7.05,12,10.586,15.536,7.05,16.95,8.464,13.414,12Z"></path></svg>'
     : '<svg width="24px" height="24px" viewBox="0 0 24 24"><path d="M12,0A12,12,0,1,0,24,12,12.035,12.035,0,0,0,12,0ZM10,17.414,4.586,12,6,10.586l4,4,8-8L19.414,8Z"></path></svg>';
 
-  const text = hasIssues
+  const text = hasIncidents
     ? html`
         <h1>We’re currently having issues.</h1>
         <p>We’re sorry for the inconvenience.</p>
@@ -60,7 +60,7 @@ const Status = (messages) => {
       `;
 
   return html`
-    <section class="status status--${hasIssues ? 'error' : 'success'}">
+    <section class="status status--${hasIncidents ? 'error' : 'success'}">
       <div class="status__icon">$${icon}</div>
       <div class="status__text">$${text}</div>
     </section>

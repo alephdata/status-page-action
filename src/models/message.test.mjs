@@ -34,23 +34,46 @@ test('adds target="_blank" and rel="noreferrer noopener" to links', () => {
   );
 });
 
-test('sets level based on issue labels', () => {
-  const infoMessage = new Message({ labels: ['ignored', 'level:info'] });
-  assert.strictEqual(infoMessage.level, 'info');
+test('sets type and level based on labels', () => {
+  const announcement = new Message({ labels: ['type:announcement'] });
+  assert.strictEqual(announcement.type, 'announcement');
+  assert.strictEqual(announcement.level, 'info');
 
-  const warningMessage = new Message({ labels: [] });
-  assert.strictEqual(warningMessage.level, 'warning');
+  const minor = new Message({ labels: ['type:minor'] });
+  assert.strictEqual(minor.type, 'minor');
+  assert.strictEqual(minor.level, 'warning');
+
+  const major = new Message({ labels: ['type:major'] });
+  assert.strictEqual(major.type, 'major');
+  assert.strictEqual(major.level, 'error');
+
+  const maintenance = new Message({ labels: ['type:scheduled-maintenance'] });
+  assert.strictEqual(maintenance.type, 'scheduled-maintenance');
+  assert.strictEqual(maintenance.level, 'info');
+
+  const defaultType = new Message({ labels: ['ignored'] });
+  assert.strictEqual(defaultType.type, 'announcement');
+  assert.strictEqual(defaultType.level, 'info');
 });
 
-test('sets success level and title prefix for closed issues', () => {
-  const message = new Message({
-    labels: ['level:warning'],
+test('sets success level and prefixes title for resolved minor/major incidents', () => {
+  const minor = new Message({
+    labels: ['type:minor'],
     closedAt: '2022-01-01T00:00:00.000Z',
     title: 'Degraded performance',
   });
 
-  assert.strictEqual(message.level, 'success');
-  assert.strictEqual(message.title, 'Resolved: Degraded performance');
+  const major = new Message({
+    labels: ['type:major'],
+    closedAt: '2022-01-01T00:00:00.000Z',
+    title: 'Outage',
+  });
+
+  assert.strictEqual(minor.level, 'success');
+  assert.strictEqual(minor.title, 'Resolved: Degraded performance');
+
+  assert.strictEqual(major.level, 'success');
+  assert.strictEqual(major.title, 'Resolved: Outage');
 });
 
 test('displays closed issues for 24 more hours', () => {
