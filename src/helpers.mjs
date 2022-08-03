@@ -65,14 +65,20 @@ function html(literals, ...substitutions) {
 function formatDate(date, format = 'long') {
   const options =
     format === 'short'
-      ? { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }
-      : {
-          weekday: 'short',
-          year: 'numeric',
-          month: 'long',
+      ? {
+          month: 'short',
           day: 'numeric',
           hour: 'numeric',
           minute: 'numeric',
+          timeZoneName: 'short',
+        }
+      : {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+          timeZoneName: 'short',
         };
 
   return new Date(date).toLocaleDateString('en-US', options);
