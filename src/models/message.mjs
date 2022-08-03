@@ -34,6 +34,10 @@ export default class Message {
       return null;
     }
 
+    if (!['minor', 'major', 'scheduled-maintenance'].includes(this.type)) {
+      return this.closedAt;
+    }
+
     return new Date(this.closedAt.getTime() + 24 * 60 * 60 * 1000);
   }
 

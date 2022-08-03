@@ -76,14 +76,35 @@ test('sets success level and prefixes title for resolved minor/major incidents',
   assert.strictEqual(major.title, 'Resolved: Outage');
 });
 
-test('displays closed issues for 24 more hours', () => {
-  const message = new Message({
+test('displays resolved/completed incidents/maintenance for 24 more hours', () => {
+  const minor = new Message({
+    labels: ['type:minor'],
     closedAt: '2022-01-01T00:00:00.000Z',
   });
 
   assert.deepStrictEqual(
-    message.displayUntil,
+    minor.displayUntil,
     new Date('2022-01-02T00:00:00.000Z')
+  );
+
+  const maintenance = new Message({
+    labels: ['type:scheduled-maintenance'],
+    closedAt: '2022-01-01T00:00:00.000Z',
+  });
+
+  assert.deepStrictEqual(
+    maintenance.displayUntil,
+    new Date('2022-01-02T00:00:00.000Z'),
+  );
+
+  const announcement = new Message({
+    labels: ['type:announcement'],
+    closedAt: '2022-01-01T00:00:00.000Z',
+  });
+
+  assert.deepStrictEqual(
+    announcement.displayUntil,
+    new Date('2022-01-01T00:00:00.000Z'),
   );
 });
 
