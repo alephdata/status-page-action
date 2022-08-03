@@ -56,12 +56,15 @@ test('sets type and level based on labels', () => {
   assert.strictEqual(defaultType.level, 'info');
 });
 
-test('sets success level and prefixes title for resolved minor/major incidents', () => {
+test('sets success level and prefixes title for resolved/completed incidents/maintenance', () => {
   const minor = new Message({
     labels: ['type:minor'],
     closedAt: '2022-01-01T00:00:00.000Z',
     title: 'Degraded performance',
   });
+
+  assert.strictEqual(minor.level, 'success');
+  assert.strictEqual(minor.title, 'Resolved: Degraded performance');
 
   const major = new Message({
     labels: ['type:major'],
@@ -69,11 +72,26 @@ test('sets success level and prefixes title for resolved minor/major incidents',
     title: 'Outage',
   });
 
-  assert.strictEqual(minor.level, 'success');
-  assert.strictEqual(minor.title, 'Resolved: Degraded performance');
-
   assert.strictEqual(major.level, 'success');
   assert.strictEqual(major.title, 'Resolved: Outage');
+
+  const maintenance = new Message({
+    labels: ['type:scheduled-maintenance'],
+    closedAt: '2022-01-01T00:00:00.000Z',
+    title: 'Scheduled maintenance',
+  });
+
+  assert.strictEqual(maintenance.level, 'success');
+  assert.strictEqual(maintenance.title, 'Completed: Scheduled maintenance');
+
+  const announcement = new Message({
+    labels: ['type:announcement'],
+    closedAt: '2022-01-01T00:00:00.000Z',
+    title: 'We have released a new feature!',
+  });
+
+  assert.strictEqual(announcement.level, 'info');
+  assert.strictEqual(announcement.title, 'We have released a new feature!');
 });
 
 test('displays resolved/completed incidents/maintenance for 24 more hours', () => {
@@ -94,7 +112,7 @@ test('displays resolved/completed incidents/maintenance for 24 more hours', () =
 
   assert.deepStrictEqual(
     maintenance.displayUntil,
-    new Date('2022-01-02T00:00:00.000Z'),
+    new Date('2022-01-02T00:00:00.000Z')
   );
 
   const announcement = new Message({
@@ -104,7 +122,7 @@ test('displays resolved/completed incidents/maintenance for 24 more hours', () =
 
   assert.deepStrictEqual(
     announcement.displayUntil,
-    new Date('2022-01-01T00:00:00.000Z'),
+    new Date('2022-01-01T00:00:00.000Z')
   );
 });
 

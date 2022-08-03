@@ -51,8 +51,20 @@ export default class Message {
     return label.replace(/^type:/, '');
   }
 
+  get isIncident() {
+    return ['minor', 'major'].includes(this.type);
+  }
+
+  get isScheduledMaintenance() {
+    return this.type === 'scheduled-maintenance';
+  }
+
   get level() {
-    if (['minor', 'major'].includes(this.type) && this.closedAt) {
+    if (this.isIncident && this.closedAt) {
+      return 'success';
+    }
+
+    if (this.isScheduledMaintenance && this.closedAt) {
       return 'success';
     }
 
@@ -60,8 +72,12 @@ export default class Message {
   }
 
   get title() {
-    if (this.closedAt) {
+    if (this.isIncident && this.closedAt) {
       return `Resolved: ${this.issue.title}`;
+    }
+
+    if (this.isScheduledMaintenance && this.closedAt) {
+      return `Completed: ${this.issue.title}`;
     }
 
     return this.issue.title;
