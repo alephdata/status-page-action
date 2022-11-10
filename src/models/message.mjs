@@ -101,7 +101,7 @@ export default class Message {
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       displayUntil: this.displayUntil,
-      isDismissible: this.isDismissible,
+      dismissible: this.isDismissible,
       type: this.type,
       level: this.level,
       title: this.title,
