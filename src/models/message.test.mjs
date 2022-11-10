@@ -34,6 +34,14 @@ test('adds target="_blank" and rel="noreferrer noopener" to links', () => {
   );
 });
 
+test('sets dismissible option based on labels', () => {
+  const nonDismissible = new Message({});
+  assert.strictEqual(nonDismissible.isDismissible, false);
+
+  const dismissible = new Message({ labels: ['dismissible'] });
+  assert.strictEqual(dismissible.isDismissible, true);
+});
+
 test('sets type and level based on labels', () => {
   const announcement = new Message({ labels: ['type:announcement'] });
   assert.strictEqual(announcement.type, 'announcement');

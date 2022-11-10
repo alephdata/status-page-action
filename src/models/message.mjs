@@ -41,6 +41,10 @@ export default class Message {
     return new Date(this.closedAt.getTime() + 24 * 60 * 60 * 1000);
   }
 
+  get isDismissible() {
+    return this.issue.labels?.includes('dismissible') || false;
+  }
+
   get type() {
     const label = this.issue.labels?.find((label) => label.startsWith('type:'));
 
@@ -97,6 +101,7 @@ export default class Message {
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       displayUntil: this.displayUntil,
+      isDismissible: this.isDismissible,
       type: this.type,
       level: this.level,
       title: this.title,

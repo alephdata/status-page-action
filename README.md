@@ -24,3 +24,7 @@ You can use issue labels to assign a type to a status message. The default statu
 | Scheduled maintenance | `type:scheduled-maintenance` |
 
 When you close a status message of type _minor incident_, _major incident_, or _scheduled maintenance_, the message will stay active for 24 more hours in order to inform your users that the incident has been resolved or that the maintenance has been completed.
+
+## Dismissible Status Messages
+
+You can add the `dismissible` label to an issue to indicate that users should be able to dismiss the message when displayed in-app.
